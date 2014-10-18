@@ -1,5 +1,5 @@
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -10,12 +10,12 @@ import org.jsoup.select.Elements;
 public class TvDbGen {
 	
 	stopWords stops ;
-	HashMap<String, String> stopwords;
+	HashSet<String> stopwords;
 	
 	public TvDbGen()
 	{
 		stops = new stopWords();
-		stopwords = new HashMap<String, String>();
+		stopwords = new HashSet<String>();
 	}
 	
 	public String getSeriesId(String tv) throws Exception
@@ -53,14 +53,14 @@ public class TvDbGen {
         	for(String over : names)
         	{
         		//System.out.println(over);
-        		stopwords.put(over,"");
+        		stopwords.add(over);
         	}
         	String Role = actor.getElementsByTag("Role").get(0).text();
         	ArrayList<String> roles = stops.removeStopwords(Role);
         	for(String over : roles)
         	{
         		//System.out.println(over);
-        		stopwords.put(over,"");
+        		stopwords.add(over);
         	}
         }
 		
@@ -83,12 +83,12 @@ public class TvDbGen {
         	for(String over : overviews)
         	{
         		//System.out.println(over);
-        		stopwords.put(over,"");
+        		stopwords.add(over);
         	}
         }
 	}
 	
-	public HashMap<String, String> GenerateStopwords(String tvShow) throws Exception
+	public HashSet<String> GenerateStopwords(String tvShow) throws Exception
 	{
 		String id = getSeriesId(tvShow);
 		storeOverview(id);
@@ -108,23 +108,13 @@ public class TvDbGen {
 		
 		String hashed = "#" +result;
 		String hashedcomb = "#" + combined;
-		stopwords.put(result, "");
-		stopwords.put(hashed, "");
-		stopwords.put(combined, "");
-		stopwords.put(hashedcomb,"");
+		stopwords.add(result);
+		stopwords.add(hashed);
+		stopwords.add(combined);
+		stopwords.add(hashedcomb);
         return stopwords;
 	}
 	
 	
-	public static void main(String[] args) throws Exception
-	{
-		TvDbGen t = new TvDbGen();
-		HashMap<String, String> m  = t.GenerateStopwords("How I met your mother");
-		for(String n : m.keySet())
-		{
-			System.out.println(n);
-		}
-		
-		
-	}
+
 }

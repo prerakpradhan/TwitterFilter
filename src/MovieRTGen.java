@@ -2,6 +2,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -10,8 +12,8 @@ import com.google.gson.JsonParser;
 
 public class MovieRTGen {
 	
-	public void GenerateStopWords(String movieTitle) throws Exception{
-		String sURL="http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=vycqgr7g8v9qwbtacpcaf7wf&q=Spiderman&page_limit=1";
+	public HashSet<String> GenerateStopWords(String movieTitle) throws Exception{
+		String sURL="http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=vycqgr7g8v9qwbtacpcaf7wf&q="+movieTitle.replace(' ', '+')+"&page_limit=1";
 		String description="";
 		
 		URL url=new URL(sURL);
@@ -46,7 +48,34 @@ public class MovieRTGen {
 			}
 				
 		}
-		System.out.println(description);		
+		
+		ArrayList<String> lists = new stopWords().removeStopwords(description);
+		
+		String[] splits = movieTitle.split(" ");
+		String combined = "";
+		for(String letter:splits)
+		{
+			combined = combined + letter;
+		}
+		String[] breakout = movieTitle.split("(?<=[\\S])[\\S]*(\\s*)?");
+		String result = "";
+		for (String letter : breakout)
+		{
+			result = result + letter;
+		}
+		
+		String hashed = "#" +result;
+		String hashedcomb = "#" + combined;
+		
+		lists.add(hashed);
+		lists.add(hashedcomb);
+		lists.add(result);
+		lists.add(combined);
+		
+		HashSet<String> cleanedtext=new HashSet<String>(lists);
+		System.out.println(cleanedtext);
+		return cleanedtext;
+		
 			
 	}
 	
